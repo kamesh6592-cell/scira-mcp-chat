@@ -3,15 +3,11 @@ import Link from "next/link";
 import React, { memo, useState } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  tomorrow,
-  oneLight,
-} from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { CodeBlock as AJCodeBlock } from '@/components/ui/code-block';
 import { Check, Copy } from "lucide-react";
 import { useTheme } from "next-themes";
 
-// Code Block component with copy button
+// Code Block component using AJ STUDIOZ
 const CodeBlock = ({
   className,
   children,
@@ -19,54 +15,16 @@ const CodeBlock = ({
   className?: string;
   children: string;
 }) => {
-  const [copied, setCopied] = useState(false);
   const match = /language-(\w+)/.exec(className || "");
   const language = match ? match[1] : "";
-  const { theme } = useTheme();
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(children);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  // Select appropriate theme based on the app's current theme
-  const codeStyle =
-    theme === "light" || theme === "sunset" ? oneLight : tomorrow;
 
   return (
-    <div className="relative group rounded-lg overflow-hidden border border-border mb-3 md:mb-4 w-full max-w-full">
-      <div className="flex items-center justify-between px-3 md:px-4 py-1.5 bg-muted/50 text-muted-foreground text-xs font-mono">
-        <span className="truncate">{language || "plain text"}</span>
-        <button
-          onClick={handleCopy}
-          className="p-1 hover:text-foreground transition-colors ml-2 flex-shrink-0"
-          aria-label="Copy code"
-        >
-          {copied ? <Check size={14} /> : <Copy size={14} />}
-        </button>
-      </div>
-      <div className="w-full max-w-full overflow-x-auto">
-        <SyntaxHighlighter
-          language={language}
-          style={codeStyle}
-          customStyle={{
-            margin: 0,
-            padding: "0.75rem 1rem",
-            fontSize: "0.85em",
-            backgroundColor: "var(--secondary)",
-            borderRadius: 0,
-            width: "100%",
-            minWidth: "100%",
-          }}
-          PreTag="div"
-          wrapLines
-          wrapLongLines
-        >
-          {children}
-        </SyntaxHighlighter>
-      </div>
-    </div>
+    <AJCodeBlock
+      language={language}
+      elementKey={`markdown-code-${Math.random()}`}
+    >
+      {children}
+    </AJCodeBlock>
   );
 };
 

@@ -6,6 +6,7 @@ import { Menu } from "lucide-react";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { BotIdClient } from "botid/client";
 
@@ -69,6 +70,7 @@ export default function RootLayout({
             </main>
           </div>
         </Providers>
+        <Toaster />
         <Analytics />
         <SpeedInsights />
       </body>

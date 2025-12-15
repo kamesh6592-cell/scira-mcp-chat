@@ -61,17 +61,17 @@ const LazyCodeBlockComponent: React.FC<CodeBlockProps> = ({ children, language, 
       <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-800">
         <div className="flex items-center gap-2">
           {language && (
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">{language}</span>
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{language}</span>
           )}
-          <span className="text-xs text-zinc-500">{lineCount} lines</span>
+          <span className="text-xs text-muted-foreground">{lineCount} lines</span>
         </div>
 
         <div className="flex gap-1">
           <button
             onClick={toggleWrap}
             className={cn(
-              'p-1 rounded border border-zinc-700 bg-zinc-800 shadow-sm transition-colors hover:bg-zinc-700',
-              isWrapped ? 'text-blue-400' : 'text-zinc-400 hover:text-zinc-200',
+              'p-1 rounded border border-border bg-background shadow-sm transition-colors',
+              isWrapped ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
             )}
             title={isWrapped ? 'Disable wrap' : 'Enable wrap'}
           >
@@ -80,8 +80,8 @@ const LazyCodeBlockComponent: React.FC<CodeBlockProps> = ({ children, language, 
           <button
             onClick={handleCopy}
             className={cn(
-              'p-1 rounded border border-zinc-700 bg-zinc-800 shadow-sm transition-colors hover:bg-zinc-700',
-              isCopied ? 'text-green-400' : 'text-zinc-400 hover:text-zinc-200',
+              'p-1 rounded border border-border bg-background shadow-sm transition-colors',
+              isCopied ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
             )}
             title={isCopied ? 'Copied!' : 'Copy code'}
           >
@@ -93,8 +93,7 @@ const LazyCodeBlockComponent: React.FC<CodeBlockProps> = ({ children, language, 
       <div className="relative">
         <div
           className={cn(
-            'font-mono text-sm leading-relaxed p-4 text-zinc-100',
-            'selection:bg-blue-500/20 selection:text-zinc-100',
+            'font-mono text-sm leading-relaxed p-2',
             isWrapped && 'whitespace-pre-wrap break-words',
             !isWrapped && 'whitespace-pre overflow-x-auto',
           )}
@@ -148,21 +147,21 @@ const SyncCodeBlock: React.FC<CodeBlockProps> = ({ language, children, elementKe
   }, []);
 
   return (
-    <div className="group relative my-5 rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-800">
+    <div className="group relative my-5 rounded-xl border border-border bg-accent overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 bg-accent border-b border-border">
         <div className="flex items-center gap-2">
           {language && (
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wide">{language}</span>
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{language}</span>
           )}
-          <span className="text-xs text-zinc-500">{lineCount} lines</span>
+          <span className="text-xs text-muted-foreground">{lineCount} lines</span>
         </div>
 
         <div className="flex gap-1">
           <button
             onClick={toggleWrap}
             className={cn(
-              'p-1 rounded border border-zinc-700 bg-zinc-800 shadow-sm transition-colors hover:bg-zinc-700',
-              isWrapped ? 'text-blue-400' : 'text-zinc-400 hover:text-zinc-200',
+              'p-1 rounded border border-border bg-background shadow-sm transition-colors',
+              isWrapped ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
             )}
             title={isWrapped ? 'Disable wrap' : 'Enable wrap'}
           >
@@ -171,8 +170,8 @@ const SyncCodeBlock: React.FC<CodeBlockProps> = ({ language, children, elementKe
           <button
             onClick={handleCopy}
             className={cn(
-              'p-1 rounded border border-zinc-700 bg-zinc-800 shadow-sm transition-colors hover:bg-zinc-700',
-              isCopied ? 'text-green-400' : 'text-zinc-400 hover:text-zinc-200',
+              'p-1 rounded border border-border bg-background shadow-sm transition-colors',
+              isCopied ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
             )}
             title={isCopied ? 'Copied!' : 'Copy code'}
           >
@@ -184,8 +183,8 @@ const SyncCodeBlock: React.FC<CodeBlockProps> = ({ language, children, elementKe
       <div className="relative">
         <div
           className={cn(
-            'font-mono text-sm leading-relaxed p-4 text-zinc-100',
-            'selection:bg-blue-500/20 selection:text-zinc-100',
+            'font-mono text-sm leading-relaxed p-4',
+            'selection:bg-primary/20 selection:text-foreground',
             isWrapped && 'whitespace-pre-wrap break-words',
             !isWrapped && 'whitespace-pre overflow-x-auto',
           )}
@@ -202,15 +201,22 @@ const SyncCodeBlock: React.FC<CodeBlockProps> = ({ language, children, elementKe
   );
 };
 
-export const CodeBlock = React.memo(
-  ({ language, children, elementKey }: CodeBlockProps) => {
-    const shouldUseLazy = children.length > 5000 || children.split('\n').length > 100;
-
-    if (shouldUseLazy) {
+const CodeBlock: React.FC<CodeBlockProps> = React.memo(
+  ({ language, children, elementKey }) => {
+    // Use lazy loading for large code blocks
+    if (children.length > 5000) {
       return (
         <Suspense fallback={
-          <div className="group relative my-5 rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-800">
+          <div className="group relative my-5 rounded-xl border border-border bg-accent overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2 bg-accent border-b border-border">
+              <div className="flex items-center gap-2">
+                {language && (
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{language}</span>
+                )}
+                <span className="text-xs text-muted-foreground">{children.split('\n').length} lines</span>
+              </div>
+            </div>
+            <div className="font-mono text-sm leading-relaxed p-4 text-muted-foreground">
               <div className="animate-pulse">Loading code block...</div>
             </div>
           </div>
@@ -235,3 +241,5 @@ export const CodeBlock = React.memo(
 );
 
 CodeBlock.displayName = 'CodeBlock';
+
+export { CodeBlock };
